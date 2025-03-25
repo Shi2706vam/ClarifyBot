@@ -1,13 +1,8 @@
 import express from 'express'
-import cors from 'cors'
 import { isAuthenticated, loginUser, logoutUser, resetPassword, sendResetOtp, sendVerifyOtp, signupUser, verifyEmail } from '../controllers/authController.js'
 import userAuth from '../middleware/userAuth.js';
 
 const router = express.Router();
-
-// const express = require('express')
-// const cors = require('cors')
-// const { test, signupUser, loginUser, logoutUser, getProfile } = require('../controllers/authController.js')
 
 // middleware
 

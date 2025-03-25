@@ -1,14 +1,11 @@
 import React, { useContext } from 'react'
 import { assets } from '../../assets/assets.js'
 import { AppContext } from '../../context/AppContext.jsx'
-import { useNavigate } from 'react-router-dom'
 import styles from './header.module.css'
 import Footer from '../footer/Footer.jsx'
 
 const Header = () => {
     const { userData, isLoggedin } = useContext(AppContext)
-
-    const navigate = useNavigate()
 
     return (
         <div className={styles.headerContainer}>
@@ -19,7 +16,7 @@ const Header = () => {
                 className={styles.headerImage}
             />
             <h1 className={styles.headingPrimary}>
-                Hey {userData.isAccountVerified ? userData.name : 'Mate'}!
+                Hey {isLoggedin ? userData.name : 'Mate'}!
                 <img
                     src={assets.hand_wave}
                     alt="Waving hand"

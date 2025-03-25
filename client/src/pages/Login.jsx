@@ -9,7 +9,7 @@ import Footer from '../components/footer/Footer'
 const Login = () => {
 
   const navigate = useNavigate()
-  const { backendUrl, setIsLoggedin, getUserData } = useContext(AppContext)
+  const { backendUrl, setIsLoggedin, getUserData, userData } = useContext(AppContext)
 
   const [state, setState] = useState('Login')
   const [name, setName] = useState('')
@@ -23,7 +23,7 @@ const Login = () => {
       axios.defaults.withCredentials = true
 
       if (state === 'Sign Up') {
-        const { data } = await axios.post(backendUrl + '/api/auth/signup', { name, email, password })
+        const { data } = await axios.post(`${backendUrl}/api/auth/signup`, { name, email, password })
 
         if (data.success) {
           // setIsLoggedin(true)
@@ -37,21 +37,23 @@ const Login = () => {
         const { data } = await axios.post(`${backendUrl}/api/auth/login`, { email, password })
 
         if (data.success) {
+
           setIsLoggedin(true)
-          getUserData()
+          await getUserData()
           toast.success(data.message)
           navigate('/')
-        }else {
+
+        } else {
           toast.error(data.message)
         }
       }
     } catch (error) {
       toast.error(error.response?.data?.message || error.message)
       console.log(error);
-      
+
     }
   };
-  
+
 
   return (
 
@@ -78,7 +80,7 @@ const Login = () => {
                 autoComplete='name'
                 value={name}
                 onChange={e => setName(e.target.value)}
-                
+
               />
             </div>
           )}
@@ -92,7 +94,7 @@ const Login = () => {
               autoComplete='email'
               value={email}
               onChange={e => setEmail(e.target.value)}
-             
+
             />
           </div>
 
@@ -105,7 +107,7 @@ const Login = () => {
               autoComplete='current-password'
               value={password}
               onChange={e => setPassword(e.target.value)}
-             
+
             />
           </div>
 

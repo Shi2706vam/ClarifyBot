@@ -4,16 +4,6 @@ import UserModel from '../models/user.js'
 import jwt from 'jsonwebtoken'
 import { transporter } from '../config/nodemailer.js'
 
-// const User = require('../models/user.js')
-// const { hashPassword, comparePassword } = require('../helpers/auth.js')
-// const jwt = require('jsonwebtoken')
-// const { transporter } = require('../config/nodemailer.js')
-
-// export const test = (req, res) => {
-//     res.json('test is working')
-// }
-
-
 // register endpoint
 export const signupUser = async (req, res) => {
     const { name, email, password } = req.body;
@@ -25,7 +15,7 @@ export const signupUser = async (req, res) => {
     }
     try {
         // check is password is good
-        if ( password.length < 6) {
+        if (password.length < 6) {
             return res.json({
                 message: 'Password is required and should be at least 6 characters long'
             })
@@ -53,7 +43,7 @@ export const signupUser = async (req, res) => {
 
         // const token = jwt.sign({ id: user._id, email: user.email, name: user.name }, process.env.JWT_SECRET, { expiresIn: '7d' })
 
-        const token = jwt.sign({ id: user._id}, process.env.JWT_SECRET, { expiresIn: '7d' })
+        const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '7d' })
 
         res.cookie('token', token, {
             httpOnly: true,
@@ -76,7 +66,7 @@ export const signupUser = async (req, res) => {
 
     } catch (error) {
         console.log(error);
-        return res.json({success: false, message: error.message})
+        return res.json({ success: false, message: error.message })
     }
 }
 
@@ -101,23 +91,43 @@ export const loginUser = async (req, res) => {
             })
         }
 
+        // Check if account is verified
+        if (!user.isAccountVerified) {
+            return res.json({
+                success: false,
+                message: 'Account not verified. Please verify your email first.',
+                userId: user._id
+            })
+        }
+
         // check if passwords match
         const match = await bcrypt.compare(password, user.password)
 
         if (!match) {
-            return res.json({ success: false, message: 'Invalid Password' })
+            return res.json({
+                success: false,
+                message: 'Invalid Password'
+            })
         }
 
-        const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '7d' })
+        const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1d' })
 
         res.cookie('token', token, {
             httpOnly: true,
             secure: process.env.NODE_ENV === 'production',
             sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'strict',
-            maxAge: 7 * 24 * 60 * 60 * 1000
+            maxAge: 1 * 24 * 60 * 60 * 1000
         });
 
-        return res.json({ success: true, message: 'Login Successful' })
+        return res.json({
+            success: true,
+            message: 'Login Successful',
+            user: {
+                name: user.name,
+                email: user.email,
+                isAccountVerified: user.isAccountVerified
+            }
+        })
     } catch (error) {
         return res.json({ success: false, message: error.message })
     }
@@ -140,13 +150,13 @@ export const logoutUser = async (req, res) => {
 
 //send verify otp
 export const sendVerifyOtp = async (req, res) => {
-    try{
-        const {userId} = req.body;
+    try {
+        const { userId } = req.body;
 
         const user = await UserModel.findById(userId);
 
-        if(user.isAccountVerified) {
-            return res.json({success:false, message: "Account Already verified"})
+        if (user.isAccountVerified) {
+            return res.json({ success: false, message: "Account Already verified" })
         }
 
         const otp = String(Math.floor(100000 + Math.random() * 900000))
@@ -160,39 +170,46 @@ export const sendVerifyOtp = async (req, res) => {
             from: process.env.SENDER_EMAIL,
             to: user.email,
             subject: 'Welcome to Clarify',
-            text: `Welcome to Clarify. Where question meets clarity. Your account has been created with ${email}`
+            text: `Welcome to Clarify. Where question meets clarity. Your account has been created with ${user.email}`
         }
 
         await transporter.sendMail(mailOption);
 
-        res.json({sucess: true, message: 'Verification OTP Sent on Email'})
+        res.json({ sucess: true, message: 'Verification OTP Sent on Email' })
 
     } catch {
-        res.json({ success: false, message: error.message})
+        res.json({ success: false, message: error.message })
     }
 }
 
 // verify email
 export const verifyEmail = async (req, res) => {
-    const {userId, otp} = req.body;
+    const { userId, otp } = req.body;
 
-    if(!userId || !otp) {
-        return res.json({success: false, message: 'Missing Details'})
+    if (!userId || !otp) {
+        return res.json({ success: false, message: 'Missing Details' })
     }
 
     try {
         const user = await UserModel.findById(userId)
 
-        if(!userId) {
-            return res.json({success: false, message: 'User not found'})
+        if (!userId) {
+            return res.json({ success: false, message: 'User not found' })
         }
 
-        if(user.verifyOtp === '' || user.verifyOtp !== otp) {
-            return res.json({success: false, message: 'Invalid OTP'})
+        if (user.isAccountVerified) {
+            return res.json({
+                success: true,
+                message: 'Account already verified'
+            });
         }
 
-        if(user.verifyOtpExpireAt < Date.now()) {
-            res.json({ success: false, message: 'OTP Expired'})
+        if (user.verifyOtp === '' || user.verifyOtp !== otp) {
+            return res.json({ success: false, message: 'Invalid OTP' })
+        }
+
+        if (user.verifyOtpExpireAt < Date.now()) {
+            res.json({ success: false, message: 'OTP has Expired' })
         }
 
         user.isAccountVerified = true;
@@ -210,36 +227,36 @@ export const verifyEmail = async (req, res) => {
 
         await transporter.sendMail(mailOption);
 
-        return res.json({success: true, message: 'Account Verified'})
+        return res.json({ success: true, message: 'Account Verified' })
     } catch (error) {
-        res.json({ success: false, message: error.message})
+        res.json({ success: false, message: error.message })
     }
 }
 
 // Check if user is authenticated
 export const isAuthenticated = async (req, res) => {
     try {
-        return res.json({success: true})
-        
+        return res.json({ success: true })
+
     } catch (error) {
-        res.json({ success: false, message: error.message})
-        
+        res.json({ success: false, message: error.message })
+
     }
 }
 
 // send password rest otp
 export const sendResetOtp = async (req, res) => {
-    const {email} = req.body;
+    const { email } = req.body;
 
     if (!email) {
-        res.json({ success: false, message: 'Email is required'})
+        res.json({ success: false, message: 'Email is required' })
     }
 
     try {
-        
-        const user = await UserModel.findOne({email});
-        if(!user){
-        res.json({ success: false, message: 'User not found'})
+
+        const user = await UserModel.findOne({ email });
+        if (!user) {
+            res.json({ success: false, message: 'User not found' })
         }
 
         const otp = String(Math.floor(100000 + Math.random() * 900000))
@@ -258,38 +275,38 @@ export const sendResetOtp = async (req, res) => {
 
         await transporter.sendMail(mailOption);
 
-        res.json({sucess: true, message: 'Password Reset OTP Sent to your Email'})
+        res.json({ sucess: true, message: 'Password Reset OTP Sent to your Email' })
     } catch (error) {
-        res.json({ success: false, message: error.message})
+        res.json({ success: false, message: error.message })
     }
 }
 
 // Reset user password
 export const resetPassword = async (req, res) => {
-    const {email, otp, newPassword} = req.body;
+    const { email, otp, newPassword } = req.body;
 
-    if(!email || !otp || !newPassword){
-        return res.json({ success: false, message: 'All the fields are required'});
+    if (!email || !otp || !newPassword) {
+        return res.json({ success: false, message: 'All the fields are required' });
     }
 
     try {
-            
-        const user = await UserModel.findOne({email});
 
-        if(!user){
-        res.json({ success: false, message: 'User not found'})
+        const user = await UserModel.findOne({ email });
+
+        if (!user) {
+            res.json({ success: false, message: 'User not found' })
         }
 
-        if(user.resetOtp === "" || user.resetOtp !== otp){
-            return res.json({ success: false, message: 'Invalid OTP'});
+        if (user.resetOtp === "" || user.resetOtp !== otp) {
+            return res.json({ success: false, message: 'Invalid OTP' });
         }
 
-        if(user.resetOtpExpireAt < Date.now()) {
-            res.json({ success: false, message: 'OTP Expired'})
+        if (user.resetOtpExpireAt < Date.now()) {
+            res.json({ success: false, message: 'OTP Expired' })
         }
         const hashedPassword = await bcrypt.hash(newPassword, 10)
 
-        user.password =hashedPassword;
+        user.password = hashedPassword;
         user.resetOtp = '';
         user.resetOtpExpireAt = 0;
 
@@ -304,10 +321,10 @@ export const resetPassword = async (req, res) => {
 
         // await transporter.sendMail(mailOption);
 
-        res.json({sucess: true, message: 'Password has been reset successfully'})
-        
+        res.json({ sucess: true, message: 'Password has been reset successfully' })
+
     } catch (error) {
-        res.json({ success: false, message: error.message})
+        res.json({ success: false, message: error.message })
     }
 }
 
