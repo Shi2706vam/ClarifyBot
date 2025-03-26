@@ -43,9 +43,9 @@ const Navbar = () => {
             {isLoggedin ? (
                 <div className={styles.user_controls}>
                     <button onClick={logout} className={styles.logout_btn}>
-                        <div className={styles.user_initial}>
-                        {userData?.name ? userData.name[0].toUpperCase() : 'U'}
-                        </div>
+                        {/* <div className={styles.user_initial}>
+                        {userData?.name && userData.name[0].toUpperCase()}
+                        </div> */}
                         Logout
                         <img src={assets.arrow_icon} alt="" className={styles.arrow_icon} />
                     </button>

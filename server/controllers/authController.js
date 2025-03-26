@@ -125,7 +125,7 @@ export const loginUser = async (req, res) => {
             user: {
                 name: user.name,
                 email: user.email,
-                isAccountVerified: user.isAccountVerified
+                // isAccountVerified: user.isAccountVerified
             }
         })
     } catch (error) {
