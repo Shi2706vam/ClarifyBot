@@ -23,7 +23,7 @@ app.use(cors({origin: allowedOrigins, credentials: true}))
 app.use(express.urlencoded({extended: false}))
 
 // api endpoints
-// app.get('/', (req, res) => res.send("API Working"));
+app.get('/', (req, res) => res.send("API Working"));
 
 app.use('/api/auth', router)
 app.use('/api/user', userRouter)
