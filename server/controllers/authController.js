@@ -1,5 +1,5 @@
 // import { hashPassword, comparePassword } from '../helpers/auth.js'
-import bcrypt from 'bcrypt'
+import bcrypt from 'bcryptjs'
 import UserModel from '../models/user.js'
 import jwt from 'jsonwebtoken'
 import { transporter } from '../config/nodemailer.js'
