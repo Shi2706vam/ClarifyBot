@@ -213,7 +213,7 @@ export const verifyEmail = async (req, res) => {
         }
 
         user.isAccountVerified = true;
-        user.verifyOtp = '';
+        user.verifyOtp = null;
         user.verifyOtpExpireAt = 0;
 
         await user.save();
