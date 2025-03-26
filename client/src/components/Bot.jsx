@@ -12,22 +12,18 @@ const scopedStyles = `
   .webchat-container ${style}
 `;
 
-const clientId = "b3d342e4-1c98-42ed-9db3-989c08a56915"; // Replace with your actual client ID
+const clientId = import.meta.env.CLIENT_ID; // Replace with your actual client ID
 
 const config = {
   composerPlaceholder: "What would you like to know?",
   botName: "Clarify",
-  botAvatar: "https://drive.google.com/file/d/1H1cjsyrtU4KzRoyfKmAANHuGbqRii1UN/view?usp=sharing",
   botDescription:
     "\"Clarify - Where question meets clarity\" , is an advanced AI agent designed to resolve your placement-related queries with precision and ease.",
   email: {},
   phone: {},
   website: {},
   termsOfService: {},
-  privacyPolicy: {
-    title: "Privacy policy",
-    link: "https://botpress.com/privacy",
-  },
+  privacyPolicy: {},
   color: "#3B82F6",
   variant: "solid",
   themeMode: "light",
