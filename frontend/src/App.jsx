@@ -54,12 +54,16 @@ const App = () => {
 	// console.log("user", user);
 
 	return (
-		<div className='min-h-screen  bg-gradient-to-br from-gray-900 via-blue-950 to-purple-950 flex flex-col items-center justify-center relative overflow-hidden'>
+		<div className='min-h-screen bg-gradient-to-br from-gray-900 via-blue-950 to-purple-950 flex flex-col items-center justify-center relative overflow-hidden'>
+			<div className='fixed inset-0 overflow-hidden pointer-events-none'>
 			<FloatingShape color='bg-blue-500' size='w-64 h-64' top='-5%' left='10%' delay={0} />
 			<FloatingShape color='bg-purple-500' size='w-48 h-48' top='70%' left='80%' delay={5} />
 			<FloatingShape color='bg-cyan-500' size='w-32 h-32' top='40%' left='-10%' delay={2} />
+			</div>
 
 			<Navbar />
+
+			<main className='flex-grow flex flex-col items-center justify-center relative z-10'>
 			<Routes>
 
 				<Route path='/' element={
@@ -105,8 +109,9 @@ const App = () => {
 				<Route path='*' element={<Navigate to='/' replace />} />
 
 			</Routes>
+			</main>
 
-			<Footer />
+			<Footer className='relative z-10' />
 			<Toaster />
 		</div>
 	)

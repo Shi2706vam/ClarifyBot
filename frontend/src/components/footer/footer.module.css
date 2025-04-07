@@ -2,7 +2,7 @@
     padding: 0.5rem 1.5rem;
     background-color: transparent;
     border-top: 1px solid #e5e7eb;
-    position: absolute;
+    /* position: fixed; */
     bottom: 0;
   }
   
@@ -51,5 +51,15 @@
     
     .footer {
       padding: 1rem;
+    }
+  }
+
+  @media (max-width: 400px) {
+    .footerContent {
+      gap: 0.3rem;
+    }
+    
+    .footer {
+      padding: 0.5rem;
     }
   }

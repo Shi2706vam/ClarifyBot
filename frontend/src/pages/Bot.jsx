@@ -30,7 +30,7 @@ export default function Bot() {
   const client = useMemo(() => getClient({ clientId }), []);
 
   return (
-      <div className='w-[1024px] h-[100dvh] px-15 pb-20 pt-15'>
+      <div className='w-[1024px] h-[95dvh] px-15 pb-5 pt-15'>
         <style>{style}</style>
         <WebchatProvider
           key={JSON.stringify(config)}
