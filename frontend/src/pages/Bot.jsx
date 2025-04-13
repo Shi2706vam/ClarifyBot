@@ -57,7 +57,7 @@ const Bot = () => {
 
   return(
     <div>
-      <iframe className='w-[1024px] h-[95dvh] px-15 pb-5 pt-15' src="https://shorturl.at/EkfnY"/>
+      <iframe className='h-[95vh] w-[80vw] px-4 py-4' src="https://shorturl.at/EkfnY"/>
     </div>
   )
 };
