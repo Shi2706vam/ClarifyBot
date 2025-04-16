@@ -53,14 +53,14 @@ const Header = () => {
                 </div>
             </div>
 
-            <motion.button
+            {/* <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={handleLogout}
                 className={styles.button}
             >
                 Logout
-            </motion.button>
+            </motion.button> */}
 
             {/* <Bot/> */}
 

@@ -56,9 +56,9 @@ import React from 'react';
 const Bot = () => {
 
   return(
-    <div>
-      <iframe className='h-[95vh] w-[80vw] px-4 py-4' src="https://shorturl.at/EkfnY"/>
-    </div>
+    <>
+      <iframe className="h-[90vh] w-[90dvw] max-w-[1150px] -z-10 px-4 py-4" src="https://shorturl.at/EkfnY"/>
+    </>
   )
 };
 

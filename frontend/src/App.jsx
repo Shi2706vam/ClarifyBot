@@ -12,8 +12,8 @@ import LoadingSpinner from "./components/LoadingSpinner.jsx"
 import ForgotPasswordPage from "./pages/ForgotPasswordPage.jsx"
 import ResetPasswordPage from "./pages/ResetPasswordPage.jsx"
 
-import { useAuthStore } from "./store/authStore";
-import Bot from './pages/Bot.jsx'
+import { useAuthStore } from "./store/authStore.js";
+import Bot from './pages/bot/Bot.jsx'
 
 // protect routes that require authentication
 const ProtectedRoute = ({ children }) => {
