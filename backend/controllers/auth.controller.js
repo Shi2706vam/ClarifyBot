@@ -18,6 +18,10 @@ export const signup = async (req, res) => {
             throw new Error("All fields are required");
         }
 
+		if (!email.endsWith("@kiit.ac.in")) {
+            return res.status(400).json({ success: false, message: "Only @kiit.ac.in email addresses are allowed" });
+        }
+
         const userAlreadyExists = await User.findOne({ email });
         console.log("userAlreadyExists", userAlreadyExists);
 
